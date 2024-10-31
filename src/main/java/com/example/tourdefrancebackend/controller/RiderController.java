@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
@@ -30,6 +31,28 @@ public class RiderController {
         Rider savedRider = riderRepository.save(rider);
         System.out.println("Saved Rider" + savedRider);
         return savedRider;
+    }
+
+    @DeleteMapping("/riders/{id}")
+    public ResponseEntity<String> deleteRider(@PathVariable int id) {
+        Optional<Rider> rider = riderRepository.findById(id);
+        if (rider.isPresent()) {
+            riderRepository.deleteById(id);
+            return ResponseEntity.ok("Deleted Rider" + id);
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rider not found");
+        }
+    }
+
+    @PutMapping("/riders")
+    public ResponseEntity<Rider> updateRider(@RequestBody Rider rider) {
+        Optional<Rider> rid = riderRepository.findById(rider.getId());
+        if (rid.isPresent()) {
+            riderRepository.save(rider);
+            return new ResponseEntity<>(rider, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
